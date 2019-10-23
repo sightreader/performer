@@ -67,12 +67,20 @@ export default function MidiDevicesPane() {
     });
   }, []);
 
-  const onInputDeviceChecked = (deviceName: any) => {
-    console.log("Checked:", deviceName);
+  const onInputDeviceChecked = (toggledDeviceName: any) => {
+    SightReaderClient.Instance.selectMidiDevices([toggledDeviceName], []).then(
+      midiDevices => {
+        setMidiDevices(midiDevices);
+      }
+    );
   };
 
-  const onOutputDeviceChecked = (deviceName: any) => {
-    console.log("Checked:", deviceName);
+  const onOutputDeviceChecked = (toggledDeviceName: any) => {
+    SightReaderClient.Instance.selectMidiDevices([], [toggledDeviceName]).then(
+      midiDevices => {
+        setMidiDevices(midiDevices);
+      }
+    );
   };
 
   return (
@@ -97,7 +105,7 @@ export default function MidiDevicesPane() {
                     checked={!!midiDevices.EnabledInputDeviceNames[index]}
                     onChange={() => onInputDeviceChecked(deviceName)}
                     value={deviceName}
-                    color="primary"
+                    color="secondary"
                   />
                 }
                 label={deviceName}
@@ -118,7 +126,7 @@ export default function MidiDevicesPane() {
                     checked={!!midiDevices.EnabledOutputDeviceNames[index]}
                     onChange={() => onOutputDeviceChecked(deviceName)}
                     value={deviceName}
-                    color="primary"
+                    color="secondary"
                   />
                 }
                 label={deviceName}

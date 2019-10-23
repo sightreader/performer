@@ -37,12 +37,13 @@ export default function Navbar() {
   return (
     <Fragment>
       <AppBar position="static">
-        <Toolbar variant="dense">
+        <Toolbar variant="dense" style={{ height: 50 }}>
           <Box
             display="flex"
             alignItems="center"
             justifyContent="flex-end"
             width="100%"
+            height="100%"
           >
             <Divider orientation="vertical" light variant="inset" />
             <Link href="/play">

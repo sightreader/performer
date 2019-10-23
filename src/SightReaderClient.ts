@@ -4,7 +4,9 @@ import {
   EnumerateMidiDevicesRequest,
   EnumerateMidiDevicesResponse,
   Command,
-  RequestResponse
+  RequestResponse,
+  SelectMidiDevicesResponse,
+  SelectMidiDevicesRequest
 } from "./Client/Commands/Command";
 
 export class SightReaderClient {
@@ -36,8 +38,8 @@ export class SightReaderClient {
         var message = msgpack.deserialize(buffer);
 
         if (
-          message[0] !== Command.EnumerateMidiDevices &&
-          message[1] !== RequestResponse.Response
+          message.Command !== Command.EnumerateMidiDevices &&
+          message.Kind !== RequestResponse.Response
         ) {
           return;
         }
@@ -49,6 +51,39 @@ export class SightReaderClient {
       this.client.Socket.addEventListener("message", onResponse.bind(this));
       this.client.Socket.send(
         msgpack.serialize(new EnumerateMidiDevicesRequest())
+      );
+    });
+  }
+
+  async selectMidiDevices(
+    inputDeviceNames: string[],
+    outputDeviceNames: string[]
+  ): Promise<SelectMidiDevicesResponse> {
+    await this.connectCheck();
+    return new Promise((resolve, reject) => {
+      async function onResponse(this: any, event: MessageEvent) {
+        const buffer = await new Response(event.data as Blob).arrayBuffer();
+        var message = msgpack.deserialize(buffer);
+
+        if (
+          message.Command !== Command.SelectMidiDevices &&
+          message.Kind !== RequestResponse.Response
+        ) {
+          return;
+        }
+
+        this.client.Socket.removeEventListener("message", onResponse);
+        resolve(EnumerateMidiDevicesResponse.FromMessagePack(message));
+      }
+
+      this.client.Socket.addEventListener("message", onResponse.bind(this));
+      this.client.Socket.send(
+        msgpack.serialize(
+          new SelectMidiDevicesRequest({
+            InputDeviceNames: inputDeviceNames,
+            OutputDeviceNames: outputDeviceNames
+          })
+        )
       );
     });
   }

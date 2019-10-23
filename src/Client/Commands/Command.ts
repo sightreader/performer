@@ -20,25 +20,46 @@ export class EnumerateMidiDevicesRequest {
 export class EnumerateMidiDevicesResponse {
   Command = Command.EnumerateMidiDevices;
   Kind = RequestResponse.Request;
-  InputDeviceNames = [];
-  OutputDeviceNames = [];
-  EnabledInputDeviceNames = [];
-  EnabledOutputDeviceNames = [];
   Error = "";
+  InputDeviceNames: string[] = [];
+  OutputDeviceNames: string[] = [];
+  EnabledInputDeviceNames: string[] = [];
+  EnabledOutputDeviceNames: string[] = [];
 
   public constructor(init?: Partial<EnumerateMidiDevicesResponse>) {
     Object.assign(this, init);
   }
 
-  static FromMessagePack(decoded: any[]): EnumerateMidiDevicesResponse {
-    return new EnumerateMidiDevicesResponse({
-      Command: decoded[0],
-      Kind: decoded[1],
-      Error: decoded[2],
-      InputDeviceNames: decoded[3],
-      OutputDeviceNames: decoded[4],
-      EnabledInputDeviceNames: decoded[5],
-      EnabledOutputDeviceNames: decoded[6]
-    });
+  static FromMessagePack(decoded: any): EnumerateMidiDevicesResponse {
+    return new EnumerateMidiDevicesResponse(decoded);
+  }
+}
+
+export class SelectMidiDevicesRequest {
+  Command = Command.SelectMidiDevices;
+  Kind = RequestResponse.Request;
+  InputDeviceNames: string[] = [];
+  OutputDeviceNames: string[] = [];
+
+  public constructor(init?: Partial<SelectMidiDevicesRequest>) {
+    Object.assign(this, init);
+  }
+}
+
+export class SelectMidiDevicesResponse {
+  Command = Command.SelectMidiDevices;
+  Kind = RequestResponse.Response;
+  Error = "";
+  InputDeviceNames: string[] = [];
+  OutputDeviceNames: string[] = [];
+  EnabledInputDeviceNames: string[] = [];
+  EnabledOutputDeviceNames: string[] = [];
+
+  public constructor(init?: Partial<SelectMidiDevicesResponse>) {
+    Object.assign(this, init);
+  }
+
+  static FromMessagePack(decoded: any): SelectMidiDevicesResponse {
+    return new SelectMidiDevicesResponse(decoded);
   }
 }
