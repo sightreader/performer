@@ -15,6 +15,7 @@ import { Fab, Box } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MenuIcon from "@material-ui/icons/Menu";
 import Navbar from "../src/Navbar";
+import MidiDevicesPane from "../src/MidiDevicesPane";
 
 const useStyles = makeStyles(theme => ({
   containerRoot: {
@@ -47,17 +48,8 @@ export default function PlayPage() {
   return (
     <Fragment>
       <Navbar />
-      <Container maxWidth="xl" className={classes.containerRoot}>
-        <Box display="flex" alignItems="center" justifyContent="flex-end">
-          <Fab
-            size="small"
-            color="secondary"
-            aria-label="add"
-            className={classes.margin}
-          >
-            <MenuIcon />
-          </Fab>
-        </Box>
+      <Container maxWidth="md">
+        <MidiDevicesPane />
       </Container>
     </Fragment>
   );

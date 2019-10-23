@@ -15,23 +15,15 @@ import { Fab, Box } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MenuIcon from "@material-ui/icons/Menu";
 import Navbar from "../src/Navbar";
+import MidiDevicesPane from "../src/MidiDevicesPane";
 
 const useStyles = makeStyles(theme => ({
   containerRoot: {
-    padding: theme.spacing(1)
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  title: {
-    flexGrow: 1
-  },
-  margin: {
-    margin: theme.spacing(1)
+    paddingTop: theme.spacing(3)
   }
 }));
 
-export default function PlayPage() {
+export default function DevicesPage() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -47,17 +39,8 @@ export default function PlayPage() {
   return (
     <Fragment>
       <Navbar />
-      <Container maxWidth="xl" className={classes.containerRoot}>
-        <Box display="flex" alignItems="center" justifyContent="flex-end">
-          <Fab
-            size="small"
-            color="secondary"
-            aria-label="add"
-            className={classes.margin}
-          >
-            <MenuIcon />
-          </Fab>
-        </Box>
+      <Container maxWidth="md" className={classes.containerRoot}>
+        <MidiDevicesPane />
       </Container>
     </Fragment>
   );

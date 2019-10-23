@@ -4,12 +4,14 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "latest",
+    "@material-ui/icons": "^4.5.1",
     "@material-ui/styles": "latest",
     "@ygoe/msgpack": "^1.0.2",
     "clsx": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "typeface-roboto": "^0.0.75"
   },
   "scripts": {
     "dev": "next",
