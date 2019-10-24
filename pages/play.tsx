@@ -15,6 +15,8 @@ import { Fab, Box } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MenuIcon from "@material-ui/icons/Menu";
 import Navbar from "../src/Navbar";
+import ScorePane from "../src/ScorePane";
+import PlayScoreNavbarComponents from "../src/PlayScoreNavbarComponents";
 
 const useStyles = makeStyles(theme => ({
   containerRoot: {
@@ -36,18 +38,10 @@ export default function PlayPage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleMenu = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <Fragment>
-      <Navbar />
-      <Container maxWidth="xl" className={classes.containerRoot}>
+    <Box display="flex" flexDirection="column" height="100%" width="100%">
+      <Navbar leftBarComponents={<PlayScoreNavbarComponents />} />
+      {/* <Container maxWidth="xl" className={classes.containerRoot}>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Fab
             size="small"
@@ -58,7 +52,8 @@ export default function PlayPage() {
             <MenuIcon />
           </Fab>
         </Box>
-      </Container>
-    </Fragment>
+      </Container> */}
+      <ScorePane />
+    </Box>
   );
 }

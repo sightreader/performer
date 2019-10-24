@@ -1,13 +1,18 @@
-import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheets } from '@material-ui/styles';
-import theme from '../src/theme';
+import React from "react";
+import Document, { Head, Main, NextScript } from "next/document";
+import { ServerStyleSheets } from "@material-ui/styles";
+import theme from "../src/theme";
 
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="en">
+      <html lang="en" style={{ height: "100%" }}>
         <Head>
+          <style>
+            {`
+            #__next { height: 100% }
+          `}
+          </style>
           <meta charSet="utf-8" />
           <meta
             name="viewport"
@@ -19,8 +24,9 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+          <script src="/verovio-toolkit.js"></script>
         </Head>
-        <body>
+        <body style={{ height: "100%" }}>
           <Main />
           <NextScript />
         </body>
@@ -58,7 +64,7 @@ MyDocument.getInitialProps = async ctx => {
 
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: App => props => sheets.collect(<App {...props} />),
+      enhanceApp: App => props => sheets.collect(<App {...props} />)
     });
 
   const initialProps = await Document.getInitialProps(ctx);
@@ -70,8 +76,8 @@ MyDocument.getInitialProps = async ctx => {
       <React.Fragment key="styles">
         {initialProps.styles}
         {sheets.getStyleElement()}
-      </React.Fragment>,
-    ],
+      </React.Fragment>
+    ]
   };
 };
 

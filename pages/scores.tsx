@@ -16,41 +16,25 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import MenuIcon from "@material-ui/icons/Menu";
 import Navbar from "../src/Navbar";
 import MidiDevicesPane from "../src/MidiDevicesPane";
+import ScoresPane from "../src/ScoresPane";
 
 const useStyles = makeStyles(theme => ({
   containerRoot: {
-    padding: theme.spacing(1)
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  title: {
-    flexGrow: 1
-  },
-  margin: {
-    margin: theme.spacing(1)
+    paddingTop: theme.spacing(3)
   }
 }));
 
-export default function PlayPage() {
+export default function ScoresPage() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleMenu = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <Fragment>
+    <Box>
       <Navbar />
-      <Container maxWidth="md">
-        <MidiDevicesPane />
+      <Container maxWidth="md" className={classes.containerRoot}>
+        <ScoresPane />
       </Container>
-    </Fragment>
+    </Box>
   );
 }

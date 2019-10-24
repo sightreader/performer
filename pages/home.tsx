@@ -49,14 +49,7 @@ export default function HomePage() {
       <Navbar />
       <Container maxWidth="xl" className={classes.containerRoot}>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
-          <Fab
-            size="small"
-            color="secondary"
-            aria-label="add"
-            className={classes.margin}
-          >
-            <MenuIcon />
-          </Fab>
+          Home page.
         </Box>
       </Container>
     </Fragment>

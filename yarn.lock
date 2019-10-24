@@ -961,6 +961,13 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/screenfull@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/screenfull/-/screenfull-4.1.0.tgz#e2f7bbb1d2c32c07e54908e47d00724b7515c2cb"
+  integrity sha512-TuFSOzuzGFVCdQmwp+a0/Qim+nJhclaWha18yK/xmjrwdPI7qrfeyoSyPx8MoJP8X5d2MwB4a6d2sZhUjJwz9A==
+  dependencies:
+    screenfull "*"
+
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -5010,6 +5017,11 @@ schema-utils@^2.0.0, schema-utils@^2.0.1:
   dependencies:
     ajv "^6.10.2"
     ajv-keywords "^3.4.1"
+
+screenfull@*, screenfull@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-5.0.0.tgz#5c2010c0e84fd4157bf852877698f90b8cbe96f6"
+  integrity sha512-yShzhaIoE9OtOhWVyBBffA6V98CDCoyHTsp8228blmqYy1Z5bddzE/4FPiJKlr8DVR4VBiiUyfPzIQPIYDkeMA==
 
 "semver@2 || 3 || 4 || 5", semver@^5.3.0, semver@^5.4.1, semver@^5.5.0, semver@^5.5.1, semver@^5.6.0:
   version "5.7.1"

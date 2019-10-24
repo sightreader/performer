@@ -1,4 +1,4 @@
-import React, { useState, useRef, Fragment } from "react";
+import React, { useState, useRef, Fragment, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -18,26 +18,50 @@ import MenuBookTwoToneIcon from "@material-ui/icons/MenuBookTwoTone";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import TouchAppTwoToneIcon from "@material-ui/icons/TouchAppTwoTone";
+import screenfull from "screenfull";
+import FullscreenExitTwoToneIcon from "@material-ui/icons/FullscreenExitTwoTone";
+import FullscreenTwoToneIcon from "@material-ui/icons/FullscreenTwoTone";
 
 const useStyles = makeStyles(t => ({
   activeIcon: {
     color: t.palette.secondary.contrastText
+  },
+  divider: {
+    marginLeft: t.spacing(0)
   }
 }));
 
-export default function Navbar() {
+interface NavbarProps {
+  leftBarComponents: JSX.Element;
+}
+
+export default function Navbar(props: NavbarProps) {
   const router = useRouter();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isFullScreen, setFullScreen] = useState(
+    screenfull.isEnabled && screenfull.isFullscreen
+  );
 
   const handleMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
 
+  useEffect(() => {
+    var fullScreenApi = screenfull as any;
+
+    if (isFullScreen && !fullScreenApi.isFullscreen) {
+      fullScreenApi.request();
+    } else if (!isFullScreen && fullScreenApi.isFullscreen) {
+      fullScreenApi.exit();
+    }
+  }, [isFullScreen]);
+
   return (
     <Fragment>
-      <AppBar position="static">
-        <Toolbar variant="dense" style={{ height: 50 }}>
+      <AppBar position="static" data-name="navbar">
+        <Toolbar variant="dense" style={{ height: 50 }} disableGutters>
+          {props.leftBarComponents ? props.leftBarComponents : null}
           <Box
             display="flex"
             alignItems="center"
@@ -45,7 +69,17 @@ export default function Navbar() {
             width="100%"
             height="100%"
           >
-            <Divider orientation="vertical" light variant="inset" />
+            <IconButton
+              onClick={() => setFullScreen(!isFullScreen)}
+              color="secondary"
+            >
+              {isFullScreen ? (
+                <FullscreenExitTwoToneIcon className={classes.activeIcon} />
+              ) : (
+                <FullscreenTwoToneIcon />
+              )}
+            </IconButton>
+            <Divider orientation="vertical" className={classes.divider} />
             <Link href="/play">
               <IconButton
                 onClick={handleMenu}
@@ -87,3 +121,7 @@ export default function Navbar() {
     </Fragment>
   );
 }
+
+Navbar.defaultProps = {
+  leftBarComponents: null
+};
