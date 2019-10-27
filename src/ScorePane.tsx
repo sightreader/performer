@@ -31,7 +31,8 @@ import clsx from "clsx";
 import { SightReaderClient } from "./SightReaderClient";
 import {
   EnumerateMidiDevicesResponse,
-  EnumerateScoresResponse
+  EnumerateScoresResponse,
+  SetScoreDisplayPositionRequest
 } from "./Client/Commands/Command";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -96,9 +97,22 @@ export default function ScorePane() {
   const stageRef = useRef(null);
   const [pageSvg, setPageSvg] = useState<string>("");
   const [pageNumber, setPageNumber] = useState(1);
-  const measureHighlightRef = useRef(null);
-  const [measureNumber, setMeasureNumber] = useState(1);
-  const [measureHighlightDetails, setMeasureHighlightDetails] = useState({
+  const measureHighlightTrebleRef = useRef(null);
+  const measureHighlightBassRef = useRef(null);
+  const [measureNumbers, setMeasureNumbers] = useState([1, 1]);
+  const [
+    bassMeasureHighlightDetails,
+    setTrebleMeasureHighlightDetails
+  ] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0
+  });
+  const [
+    trebleMeasureHighlightDetails,
+    setBassMeasureHighlightDetails
+  ] = useState({
     top: 0,
     left: 0,
     width: 0,
@@ -106,8 +120,9 @@ export default function ScorePane() {
   });
 
   useEffect(() => {
-    highlightMeasure(measureNumber);
-  }, [measureNumber]);
+    highlightMeasure(1, measureNumbers[0]);
+    highlightMeasure(2, measureNumbers[0]);
+  }, [measureNumbers]);
 
   useEffect(() => {
     if (
@@ -131,7 +146,8 @@ export default function ScorePane() {
         return rerenderScore(pageNumber);
       })
       .then(() => {
-        highlightMeasure(measureNumber);
+        highlightMeasure(1, measureNumbers[0]);
+        highlightMeasure(2, measureNumbers[0]);
       });
   }, [SightReaderClient.Instance.Score]);
 
@@ -152,6 +168,32 @@ export default function ScorePane() {
   }, [pageNumber]);
   if (typeof window !== "undefined") {
     (window as any).pageNumber = pageNumber;
+  }
+
+  SightReaderClient.Instance.setSetScoreDisplayPositionRequestedCallback(
+    onSetScoreDisplayPositionRequested
+  );
+
+  function onSetScoreDisplayPositionRequested(
+    command: SetScoreDisplayPositionRequest
+  ) {
+    console.log(
+      "Received final set score display position request:",
+      command.MeasureNumbers,
+      command.GroupIndices
+    );
+
+    var highestPlayedMeasure = Math.max(...command.MeasureNumbers);
+    var measureRange = getPageMeasureRange();
+    var [lowestMeasureDisplayed, highestMeasureDisplayed] = measureRange;
+    if (highestPlayedMeasure < lowestMeasureDisplayed) {
+      setPageNumber(Math.max(0, pageNumber - 1));
+    } else if (highestPlayedMeasure > highestMeasureDisplayed) {
+      setPageNumber(pageNumber + 1);
+    } else {
+      highlightMeasure(1, command.MeasureNumbers[0]);
+      highlightMeasure(2, command.MeasureNumbers[1]);
+    }
   }
 
   function getPageMeasureRange(): [number, number] {
@@ -210,7 +252,11 @@ export default function ScorePane() {
     (window as any).getPageMeasureRange = getPageMeasureRange;
   }
 
-  function highlightMeasure(targetMeasureNum: number) {
+  function highlightMeasure(staff: number, targetMeasureNum: number) {
+    if (SightReaderClient.Instance.Score.length === 0) {
+      return;
+    }
+
     const [measureRangeLow, measureRangeHigh] = getPageMeasureRange();
 
     if (
@@ -230,13 +276,37 @@ export default function ScorePane() {
       return;
     }
 
-    const measureBoundingBox = measureEl.getBoundingClientRect();
-    setMeasureHighlightDetails({
-      top: measureBoundingBox.top,
-      left: measureBoundingBox.left,
-      width: measureBoundingBox.width,
-      height: measureBoundingBox.height
-    });
+    const staffEl = measureEl.querySelectorAll(".staff")[staff - 1];
+    if (!staffEl) {
+      console.error(
+        "Could not highlight staff",
+        staff,
+        "of measure",
+        targetMeasureNum,
+        ". The measure element was:",
+        measureEl
+      );
+      return;
+    }
+
+    const staffBoundingBox = staffEl.getBoundingClientRect();
+    if (staff === 1) {
+      setTrebleMeasureHighlightDetails({
+        top: staffBoundingBox.top,
+        left: staffBoundingBox.left,
+        width: staffBoundingBox.width,
+        height: staffBoundingBox.height
+      });
+    } else if (staff === 2) {
+      setBassMeasureHighlightDetails({
+        top: staffBoundingBox.top,
+        left: staffBoundingBox.left,
+        width: staffBoundingBox.width,
+        height: staffBoundingBox.height
+      });
+    } else {
+      console.error("Unknown staff", staff, "to highlight measure for.");
+    }
   }
   if (typeof window !== "undefined") {
     (window as any).highlightMeasure = highlightMeasure;
@@ -274,14 +344,29 @@ export default function ScorePane() {
         // }
       `}</style>
       <div
-        id="measure-highlight"
-        ref={measureHighlightRef}
+        id="measure-highlight-staff-treble"
+        ref={measureHighlightTrebleRef}
         style={{
           position: "absolute",
-          width: measureHighlightDetails.width,
-          height: measureHighlightDetails.height,
-          top: measureHighlightDetails.top,
-          left: measureHighlightDetails.left,
+          width: trebleMeasureHighlightDetails.width,
+          height: trebleMeasureHighlightDetails.height,
+          top: trebleMeasureHighlightDetails.top,
+          left: trebleMeasureHighlightDetails.left,
+          background: "#457c97",
+          opacity: 0.25,
+          borderRadius: 0,
+          boxShadow: `0 0 0 1px #d4d4d5, 0 2px 4px 0 rgba(34,36,38,.12), 0 2px 10px 0 rgba(34,36,38,.15)`
+        }}
+      />
+      <div
+        id="measure-highlight-staff-bass"
+        ref={measureHighlightBassRef}
+        style={{
+          position: "absolute",
+          width: bassMeasureHighlightDetails.width,
+          height: bassMeasureHighlightDetails.height,
+          top: bassMeasureHighlightDetails.top,
+          left: bassMeasureHighlightDetails.left,
           background: "#457c97",
           opacity: 0.25,
           borderRadius: 0,

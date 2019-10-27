@@ -10,21 +10,25 @@ import {
   EnumerateScoresResponse,
   EnumerateScoresRequest,
   LoadScoreResponse,
-  LoadScoreRequest
+  LoadScoreRequest,
+  SetScoreDisplayPositionRequest
 } from "./Client/Commands/Command";
 
 export class SightReaderClient {
   private verovio: any;
   private client: Client = new Client();
   private score: string = "";
+  private onSetScoreDisplayPositionRequested: Function = () => {};
   private static instance: SightReaderClient = new SightReaderClient();
 
   public static get Instance() {
     return SightReaderClient.instance;
   }
 
-  async connect() {
-    await this.client.connect();
+  async setSetScoreDisplayPositionRequestedCallback(
+    onSetScoreDisplayPositionRequested: Function
+  ) {
+    this.onSetScoreDisplayPositionRequested = onSetScoreDisplayPositionRequested;
   }
 
   async getVerovio() {
@@ -86,65 +90,53 @@ export class SightReaderClient {
       this.client.Socket.readyState !== this.client.Socket.OPEN
     ) {
       await this.client.connect();
+      this.addMessageHandlerForSetScoreDisplayPosition();
     }
   }
 
-  async enumerateMidiDevices(): Promise<EnumerateMidiDevicesResponse> {
-    await this.connectCheck();
-    return new Promise((resolve, reject) => {
-      async function onResponse(this: any, event: MessageEvent) {
-        const buffer = await new Response(event.data as Blob).arrayBuffer();
-        var message = msgpack.deserialize(buffer);
+  private addMessageHandlerForSetScoreDisplayPosition() {
+    var self = this;
+    async function onResponse(event: MessageEvent) {
+      const buffer = await new Response(event.data as Blob).arrayBuffer();
+      var message = msgpack.deserialize(buffer);
 
-        if (
-          message.Command !== Command.EnumerateMidiDevices &&
-          message.Kind !== RequestResponse.Response
-        ) {
-          return;
-        }
-
-        this.client.Socket.removeEventListener("message", onResponse);
-        resolve(EnumerateMidiDevicesResponse.FromMessagePack(message));
+      if (
+        message.Command !== Command.SetScoreDisplayPosition &&
+        message.Kind !== RequestResponse.Request
+      ) {
+        return;
       }
 
-      this.client.Socket.addEventListener("message", onResponse.bind(this));
-      this.client.Socket.send(
-        msgpack.serialize(new EnumerateMidiDevicesRequest())
-      );
-    });
+      if (typeof self.onSetScoreDisplayPositionRequested === "function") {
+        var command = SetScoreDisplayPositionRequest.FromMessagePack(message);
+        self.onSetScoreDisplayPositionRequested(command);
+      }
+    }
+
+    console.log("Adding message handler for set score display position...");
+    this.client.Socket.addEventListener("message", onResponse);
   }
 
-  async selectMidiDevices(
+  async EnumerateMidiDevices(): Promise<EnumerateMidiDevicesResponse> {
+    return this.SendRequest(
+      new EnumerateMidiDevicesRequest(),
+      Command.SelectMidiDevices,
+      EnumerateMidiDevicesResponse
+    );
+  }
+
+  async SelectMidiDevices(
     inputDeviceNames: string[],
     outputDeviceNames: string[]
   ): Promise<SelectMidiDevicesResponse> {
-    await this.connectCheck();
-    return new Promise((resolve, reject) => {
-      async function onResponse(this: any, event: MessageEvent) {
-        const buffer = await new Response(event.data as Blob).arrayBuffer();
-        var message = msgpack.deserialize(buffer);
-
-        if (
-          message.Command !== Command.SelectMidiDevices &&
-          message.Kind !== RequestResponse.Response
-        ) {
-          return;
-        }
-
-        this.client.Socket.removeEventListener("message", onResponse);
-        resolve(EnumerateMidiDevicesResponse.FromMessagePack(message));
-      }
-
-      this.client.Socket.addEventListener("message", onResponse.bind(this));
-      this.client.Socket.send(
-        msgpack.serialize(
-          new SelectMidiDevicesRequest({
-            InputDeviceNames: inputDeviceNames,
-            OutputDeviceNames: outputDeviceNames
-          })
-        )
-      );
-    });
+    return this.SendRequest(
+      new SelectMidiDevicesRequest({
+        InputDeviceNames: inputDeviceNames,
+        OutputDeviceNames: outputDeviceNames
+      }),
+      Command.SelectMidiDevices,
+      SelectMidiDevicesResponse
+    );
   }
 
   async EnumerateScores(): Promise<EnumerateScoresResponse> {

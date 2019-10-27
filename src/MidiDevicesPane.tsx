@@ -62,13 +62,13 @@ export default function MidiDevicesPane() {
   );
 
   useEffect(() => {
-    SightReaderClient.Instance.enumerateMidiDevices().then(midiDevices => {
+    SightReaderClient.Instance.EnumerateMidiDevices().then(midiDevices => {
       setMidiDevices(midiDevices);
     });
   }, []);
 
   const onInputDeviceChecked = (toggledDeviceName: any) => {
-    SightReaderClient.Instance.selectMidiDevices([toggledDeviceName], []).then(
+    SightReaderClient.Instance.SelectMidiDevices([toggledDeviceName], []).then(
       midiDevices => {
         setMidiDevices(midiDevices);
       }
@@ -76,7 +76,7 @@ export default function MidiDevicesPane() {
   };
 
   const onOutputDeviceChecked = (toggledDeviceName: any) => {
-    SightReaderClient.Instance.selectMidiDevices([], [toggledDeviceName]).then(
+    SightReaderClient.Instance.SelectMidiDevices([], [toggledDeviceName]).then(
       midiDevices => {
         setMidiDevices(midiDevices);
       }

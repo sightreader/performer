@@ -107,7 +107,6 @@ export class LoadScoreResponse {
   }
 
   static FromMessagePack(decoded: any): LoadScoreResponse {
-    console.log("laodscoreresponse:", decoded);
     return new LoadScoreResponse(decoded);
   }
 }
@@ -115,11 +114,15 @@ export class LoadScoreResponse {
 export class SetScoreDisplayPositionRequest {
   Command = Command.SetScoreDisplayPosition;
   Kind = RequestResponse.Request;
-  MeasureNumber = 0;
-  GroupIndex = 0;
+  MeasureNumbers = [];
+  GroupIndices = [];
 
   public constructor(init?: Partial<SetScoreDisplayPositionRequest>) {
     Object.assign(this, init);
+  }
+
+  static FromMessagePack(decoded: any): SetScoreDisplayPositionRequest {
+    return new SetScoreDisplayPositionRequest(decoded);
   }
 }
 
