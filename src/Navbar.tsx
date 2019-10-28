@@ -80,12 +80,12 @@ export default function Navbar(props: NavbarProps) {
               )}
             </IconButton>
             <Divider orientation="vertical" className={classes.divider} />
-            <Link href="/play">
+            <Link href="/">
               <IconButton
                 onClick={handleMenu}
                 color="secondary"
                 className={
-                  router.pathname === "/play" ? classes.activeIcon : undefined
+                  router.pathname === "/" ? classes.activeIcon : undefined
                 }
               >
                 <TouchAppTwoToneIcon />
