@@ -2225,7 +2225,7 @@ class Client {
 
     return new _babel_runtime_corejs2_core_js_promise__WEBPACK_IMPORTED_MODULE_0___default.a((resolve, reject) => {
       window.client = this;
-      this.socket = new WebSocket("ws://localhost:55367");
+      this.socket = new WebSocket(`ws://${location.host}:55367`);
       console.log("Opening websocket connection...");
 
       this.socket.onerror = event => {

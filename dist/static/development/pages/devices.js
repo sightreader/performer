@@ -57556,7 +57556,7 @@ function () {
               case 2:
                 return _context2.abrupt("return", new _babel_runtime_corejs2_core_js_promise__WEBPACK_IMPORTED_MODULE_1___default.a(function (resolve, reject) {
                   window.client = _this;
-                  _this.socket = new WebSocket("ws://localhost:55367");
+                  _this.socket = new WebSocket("ws://".concat(location.host, ":55367"));
                   console.log("Opening websocket connection...");
 
                   _this.socket.onerror = function (event) {

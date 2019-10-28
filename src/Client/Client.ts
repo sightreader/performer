@@ -19,7 +19,7 @@ export class Client {
     return new Promise((resolve, reject) => {
       (window as any).client = this;
 
-      this.socket = new WebSocket("ws://localhost:55367");
+      this.socket = new WebSocket(`ws://${location.host}:55367`);
       console.log("Opening websocket connection...");
       this.socket.onerror = event => {
         console.error("[Websocket] Errored:", event);
