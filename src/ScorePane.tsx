@@ -252,7 +252,7 @@ export default function ScorePane() {
     (window as any).getPageMeasureRange = getPageMeasureRange;
   }
 
-  function highlightMeasure(staff: number, targetMeasureNum: number) {
+  function highlightMeasure(staff: number, targetMeasureNum: number, targetGroupIndex: number) {
     if (SightReaderClient.Instance.Score.length === 0) {
       return;
     }
